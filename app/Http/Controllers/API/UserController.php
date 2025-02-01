@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Services\UserService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,7 @@ class UserController extends Controller
 
     public function index(): JsonResponse
     {   
-        try {
+                try {
             return response()->json([
                 'status' => true,
                 'data' => UserResource::collection($this->userService->list()),
@@ -47,6 +48,20 @@ class UserController extends Controller
                 'message' => $exception->getMessage(),
             ], 422);
         }
+    }
 
+    public function show(User $user)
+    {
+        try {
+            return response()->json([
+                'status' => true,
+                'data' => new UserResource($user),
+            ]);
+        } catch (Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ], 422);
+        }
     }
 }

@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             "name"                  => $this->name,
             "phone"                 => $this->phone,
             "position_id"           => $this->position_id,
+            "position_name"         => $this->position->name,
             "email"                 => $this->email,
             "photo"                 => $this->photo,
             'create_date'           => Carbon::parse($this->create_date)->format(env('DATETIME_FORMAT')),

@@ -41,4 +41,5 @@ class UserService
 
         return User::create($data);
     }
+
 }
