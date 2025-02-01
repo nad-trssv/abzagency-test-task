@@ -20,7 +20,7 @@ class UserController extends Controller
 
     public function index(): JsonResponse
     {   
-                try {
+        try {
             return response()->json([
                 'status' => true,
                 'data' => UserResource::collection($this->userService->list()),
@@ -33,7 +33,7 @@ class UserController extends Controller
         }
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         try {
             $validatedData = $request->validated();
@@ -50,7 +50,7 @@ class UserController extends Controller
         }
     }
 
-    public function show(User $user)
+    public function show(User $user): JsonResponse
     {
         try {
             return response()->json([

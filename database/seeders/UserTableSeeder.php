@@ -17,7 +17,7 @@ class UserTableSeeder extends Seeder
         $faker = Faker::create();
         $positionIds = DB::table('positions')->pluck('id');
 
-        foreach (range(1, 45) as $index) {
+        foreach (range(1, 44) as $index) {
             DB::table('users')->insert([
                 'name' => $faker->name(),
                 'email' => $faker->unique()->safeEmail(),
@@ -29,5 +29,19 @@ class UserTableSeeder extends Seeder
                 'updated_at' => now(),
             ]);
         }
+        
+        //TEST USER
+        DB::table('users')->insert([
+            [
+                'name' => 'John Smith',
+                'email' => "user@example.com",
+                'phone' => '+380562158442',
+                'position_id' => "1",
+                'password' => Hash::make('user123'),
+                'photo' => 'https://randomuser.me/api/portraits/women/' . $faker->numberBetween(1, 99) . '.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }
