@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreRequest;
+use App\Http\Resources\UserResource;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
@@ -17,21 +19,33 @@ class UserController extends Controller
 
     public function index(): JsonResponse
     {   
-        $data = $this->userService->list();
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ]);
+        try {
+            return response()->json([
+                'status' => true,
+                'data' => UserResource::collection($this->userService->list()),
+            ]);
+        } catch (Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ], 422);
+        }
     }
 
-    public function store(StoreRequest $request): JsonResponse
+    public function store(StoreRequest $request)
     {
         try {
             $validatedData = $request->validated();
             $data = $this->userService->store($validatedData);
-            return response()->json($data, 201);
-        } catch (\Throwable $e) {
-            return response()->json(['error' => 'Internal Server Error'], 500);
+            return response()->json([
+                'status' => true,
+                'data' => new UserResource($data),
+            ]);
+        } catch (Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ], 422);
         }
 
     }

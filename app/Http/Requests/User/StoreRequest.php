@@ -24,9 +24,9 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required|string|min:2|max:60',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|unique:users,phone|regex:/^\+380\d{9}$/',
+            'phone' => 'required|unique:users,phone|regex:/^\+380\d+$/',
             'position_id' => 'required|exists:positions,id',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp',
             'password' => 'required|string|min:8|confirmed',
         ];
     }
@@ -41,8 +41,8 @@ class StoreRequest extends FormRequest
             'photo.mimes' => 'The photo must be a jpg or jpeg image.',
             'photo.dimensions' => 'The photo must have dimensions of at least 70x70px.',
             'photo.max' => 'The photo size must not exceed 5MB.',
-            'password.required' => 'Поле пароль обязательно для заполнения.',
-            'password.confirmed' => 'Пароли не совпадают.',
+            'password.required' => 'The password field is required.',
+            'password.confirmed' => 'The passwords do not match.',
         ];
     }
 }
