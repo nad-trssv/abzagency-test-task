@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             "position_id"           => $this->position_id,
             "position"              => $this->position->name,
             "email"                 => $this->email,
-            "photo"                 => $this->photo,
+            'photo' => $this->photo ? Storage::url($this->photo) : asset('assets/images/no-image.jpg'),
             'create_date'           => Carbon::parse($this->create_date)->format(env('DATETIME_FORMAT')),
             'update_date'           => Carbon::parse($this->update_date)->format(env('DATETIME_FORMAT')),
         ];

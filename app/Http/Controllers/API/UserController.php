@@ -33,7 +33,7 @@ class UserController extends Controller
                     'next' => $users->nextPageUrl(),
                     'prev' => $users->previousPageUrl(),
                 ],
-                'users' => $users->items(),
+                'users' => UserResource::collection($users->items()),
             ], 200);
         } catch (Exception $exception) {
             return response()->json([

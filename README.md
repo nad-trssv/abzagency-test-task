@@ -2,16 +2,26 @@
     Простой API для работы с пользователями
 </h2>
 
-<h3>Используемые технологии:</h3>
+<h3>Бэкенд:</h3>
 <ul>
     <li><bold>PHP 8.0+ и Laravel 11</bold></li>
     <li><bold>Sanctum </bold> - для аутентификации через токены</li>
     <li><bold>TinyPNG</bold>   - для оптимизации изображений</li>
+    <li><bold>Storage </bold> — для хранения загруженных файлов</li>
+</ul>
+
+<h3>Фронтенд :</h3>
+<ul>
+    <li><bold>jQuery</bold> — для работы с AJAX запросами и манипуляциями DOM</li>
+    <li><bold>Tailwind CSS </bold> - стили</li>
+</ul>
+
+<h3>Слой сервисов:</h3>
+<ul>
     <li><bold>UserService</bold>  - для обработки логики, связанной с пользователями</li>
     <li><bold>UserResource </bold>  - для форматированного вывода данных о пользователе</li>
     <li><bold>TinyPngService </bold> -  для централизованного доступа к API TinyPNG</li>
 </ul>
-
 
 <h3>API:</h3>
 <h4>1. Получение токена (логин)</h4>
@@ -58,4 +68,4 @@
             "email": "user@example.com",
             "password": "user123"
         }
-        
+    

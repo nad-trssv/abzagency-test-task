@@ -19,7 +19,7 @@ class UserService
 
     public function list(): LengthAwarePaginator
     {
-        $data = User::paginate(6);
+        $data = User::orderByDesc('id')->paginate(6);
         return $data;
     }
 
