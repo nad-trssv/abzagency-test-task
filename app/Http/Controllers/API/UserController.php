@@ -21,13 +21,23 @@ class UserController extends Controller
     public function index(): JsonResponse
     {   
         try {
+            $users = $this->userService->list();
+
             return response()->json([
-                'status' => true,
-                'data' => UserResource::collection($this->userService->list()),
-            ]);
+                'success' => true,
+                'total_pages' => $users->lastPage(),
+                'total_users' => $users->total(),
+                'count' => $users->perPage(),
+                'page' => $users->currentPage(),
+                'links' => [
+                    'next' => $users->nextPageUrl(),
+                    'prev' => $users->previousPageUrl(),
+                ],
+                'users' => $users->items(),
+            ], 200);
         } catch (Exception $exception) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => $exception->getMessage(),
             ], 422);
         }
@@ -39,12 +49,13 @@ class UserController extends Controller
             $validatedData = $request->validated();
             $data = $this->userService->store($validatedData);
             return response()->json([
-                'status' => true,
-                'data' => new UserResource($data),
-            ]);
+                'success' => true,
+                'user_id' => $data->id,
+                "message" => "New user successfully registered"
+            ], 200);
         } catch (Exception $exception) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => $exception->getMessage(),
             ], 422);
         }
@@ -54,12 +65,12 @@ class UserController extends Controller
     {
         try {
             return response()->json([
-                'status' => true,
-                'data' => new UserResource($user),
-            ]);
+                'success' => true,
+                'user' => new UserResource($user),
+            ], 200);
         } catch (Exception $exception) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => $exception->getMessage(),
             ], 422);
         }

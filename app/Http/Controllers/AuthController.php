@@ -19,13 +19,14 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json(['token' => $token]);
+        return response()->json(['token' => $token], 200);
     }
 
     public function protectedRoute(Request $request): JsonResponse
     {
         return response()->json([
-            'message' => 'Access!',
+            'success' => true,
+            'token' => $request->bearerToken(),
             'user' => new UserResource($request->user()),
         ]);
     }

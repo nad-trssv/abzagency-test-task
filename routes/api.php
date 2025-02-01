@@ -16,6 +16,6 @@ Route::middleware(['api'])->group(function() {
     });
 
     Route::middleware(['auth:sanctum'])->group(function() {
-        Route::get('/protected', [AuthController::class, 'protectedRoute'])->name('protectedRoute');
+        Route::get('/token', [AuthController::class, 'protectedRoute'])->name('protectedRoute');
     });
 });
