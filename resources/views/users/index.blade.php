@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>Users list</title>
-        
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @endif
-    </head>
-    <body>
+@section('title', 'Users index')
+<x-layout>
         <div class="bg-white">
             <header class="absolute inset-x-0 top-0 z-50">
               <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
@@ -97,7 +85,7 @@
             </div>
         </div>
 
-        
+        @push('scripts')
           <script type="module">
             let currentPage = 1;
             let users = [];
@@ -189,8 +177,10 @@
                     const row = `
                         <tr>
                             <td class="inline-flex items-center gap-4">
+                                <a href="/${user.id}">
                                 <img src="${user.photo}" alt="${user.name}" width="50" height="50" class="rounded-xl shadow-lg shadow-gray-800">
                                 <p>${user.name}</p>
+                                </a>
                             </td>
                             <td>
                                 <a class="text-blue-700"  href="mailto:${user.email}">${user.email}</a>
@@ -205,5 +195,5 @@
                 });
             }
           </script>
-    </body>
-</html>
+        @endpush
+    </x-layout>
