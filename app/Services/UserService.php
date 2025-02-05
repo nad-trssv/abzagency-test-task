@@ -36,8 +36,7 @@ class UserService
                 $data['photo'] = $optimizedImagePath;
             }
         }
-        
-        $data['password'] = Hash::make($data['password']);
+    
 
         return User::create($data);
     }

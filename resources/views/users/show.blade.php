@@ -1,4 +1,4 @@
-@section('title', 'Users index')
+@section('title', 'Users')
 <x-layout>
         <div class="bg-white">
             <header class="absolute inset-x-0 top-0 z-50">
@@ -6,6 +6,9 @@
                 <div class="hidden lg:flex lg:gap-x-12">
                     <a href={{ route('users.index') }} id="new-user-modal" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
                         Users List
+                    </a>
+                    <a href="{{ route('positions.index') }}" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        Positions
                     </a>
                 </div>
               </nav>
@@ -48,11 +51,10 @@
                     url: '/api/users/'+ id,
                     type: 'GET',
                     success: function(response) {
-                        console.log(response);
                         renderUser(response.user);
                     },
                     error: function(xhr, status, error) {
-                        console.error('Ошибка запроса:', error);
+                        console.error('Ошибка запроса:', xhr);
                     }
                 });
             });

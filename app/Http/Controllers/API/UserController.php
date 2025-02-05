@@ -64,6 +64,7 @@ class UserController extends Controller
     public function show(User $user): JsonResponse
     {
         try {
+
             return response()->json([
                 'success' => true,
                 'user' => new UserResource($user),

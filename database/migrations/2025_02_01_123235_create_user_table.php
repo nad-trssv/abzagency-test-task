@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->foreignId('position_id')->constrained('positions')->cascadeOnDelete();
-            $table->string('password');
             $table->string('photo')->nullable();
             $table->timestamps();
         });

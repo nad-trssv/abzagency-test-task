@@ -27,7 +27,6 @@ class StoreRequest extends FormRequest
             'phone' => 'required|unique:users,phone|regex:/^\+380\d+$/',
             'position_id' => 'required|exists:positions,id',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=70,min_height=70',
-            'password' => 'required|string|min:8|confirmed',
         ];
     }
 
@@ -39,8 +38,6 @@ class StoreRequest extends FormRequest
             'email.email' => 'User email must be a valid email according to RFC2822.',
             'email.unique' => 'This email is already taken.',
             'phone.regex' => 'The phone number must start with +380.',
-            'password.required' => 'The password field is required.',
-            'password.confirmed' => 'The passwords do not match.',
         ];
     }
 }

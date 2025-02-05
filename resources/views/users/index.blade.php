@@ -1,4 +1,4 @@
-@section('title', 'Users index')
+@section('title', 'Users')
 <x-layout>
         <div class="bg-white">
             <header class="absolute inset-x-0 top-0 z-50">
@@ -7,6 +7,15 @@
                     <button id="new-user-modal" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
                         Create New User
                     </button>
+                    <a href="{{ route('positions.index') }}" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        Positions
+                    </a>
+                    <button id="logout" class="hidden bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                        Logout
+                    </button>
+                    <a href="{{ route('documentation.index') }}" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                        Api Docs 
+                    </a>
                 </div>
               </nav>
             </header>
@@ -20,6 +29,7 @@
                             <th class="text-left uppercase">Email</th>
                             <th class="text-left uppercase">Phone</th>
                             <th class="text-left uppercase">role</th>
+                            <th class="text-left uppercase"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -27,7 +37,7 @@
                       </table>
                 </section>
                 <div class="text-right mt-4">
-                    <button id="load-more-btn" class="bg-orange-400 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <button id="load-more-btn" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                         Show more
                     </button>
                 </div>
@@ -62,15 +72,6 @@
                             <div id="position_id-error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                         <div class="mb-4">
-                            <label for="password" class="block text-gray-700">Password</label>
-                            <input type="password" id="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-md">
-                            <div id="password-error" class="error-message text-red-500 text-sm mt-1"></div>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password_confirmation" class="block text-gray-700">Confirm Password</label>
-                            <input type="password" id="password_confirmation" name="password_confirmation" class="w-full px-4 py-2 border border-gray-300 rounded-md">
-                        </div>
-                        <div class="mb-4">
                             <label for="photo" class="block text-gray-700">photo</label>
                             <input type="file" id="photo" name="photo" class="w-full px-4 py-2 border border-gray-300 rounded-md">
                             <div id="photo-error" class="error-message text-red-500 text-sm mt-1"></div>
@@ -91,8 +92,19 @@
             let users = [];
 
             $(document).ready(function() {
+                //Check token and activation logout button 
+                const token = localStorage.getItem('auth_token');
+                if (token) {
+                  $('#logout').removeClass('hidden');
+                } else {
+                  let tokenEl = document.querySelectorAll('.getToken');
+                  tokenEl.forEach(function(el) {
+                      el.textContent = ''; 
+                  });
+                  $('#logout').addClass('hidden');
+                }
+
                 loadUsers(currentPage, false);
-            
                 $('#load-more-btn').click(function() {
                     currentPage++;
                     loadUsers(currentPage, false);
@@ -114,8 +126,6 @@
                     if (photoInput.files.length > 0) {
                         formData.append('photo', photoInput.files[0]);
                     }
-                    formData.append('password', $('#password').val());
-                    formData.append('password_confirmation', $('#password_confirmation').val());
 
                     $.ajax({
                         url: '/api/users',
@@ -123,6 +133,9 @@
                         data: formData,
                         processData: false,
                         contentType: false,
+                        headers: {
+                          'Authorization': 'Bearer ' + localStorage.getItem('auth_token'),
+                        },
                         success: function(response) {
                             $('#modal').addClass('hidden');
                             currentPage = 1;
@@ -139,10 +152,14 @@
                                     $(`#${field}-error`).text(errorText);
                                 });
                             } else {
-                                console.log('There was an unexpected error.');
+                                alert('Not authorized!');
                             }
                         }
                     });
+                });
+
+                $('#logout').click(function(){
+                    removeToken();
                 });
             });
             function loadUsers(page, clear) {
@@ -177,7 +194,7 @@
                     const row = `
                         <tr>
                             <td class="inline-flex items-center gap-4">
-                                <a href="/${user.id}">
+                                <a href="/users/${user.id}">
                                 <img src="${user.photo}" alt="${user.name}" width="50" height="50" class="rounded-xl shadow-lg shadow-gray-800">
                                 <p>${user.name}</p>
                                 </a>
@@ -189,9 +206,73 @@
                                 <a class="text-blue-700" href="tel:${user.phone}">${user.phone}</a>
                             </td>
                             <td>${user.position}</td>
+                            <td>
+                                <button class="login-btn text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                                    Get token
+                                </button>
+                                <p class="getToken" data-userId="${user.id}"></p>
+                            </td>
                         </tr>
                     `;
                     $('#users-table tbody').append(row);
+                });
+                $('.login-btn').on('click', function() {
+                    console.log('pressed login btn');
+                    const email = $(this).closest('tr').find('td:nth-child(2)').text().trim();
+                    $.ajax({
+                        url: '/api/token',
+                        type: 'POST',
+                        data: { email: email},
+                        success: function(response) {
+                            console.log('login response');
+                            console.log(response);
+                            let tokenEl = document.querySelectorAll('.getToken');
+                            tokenEl.forEach(function(el) {
+                                el.textContent = ''; 
+                            });
+                            let datauserId = document.querySelector(`[data-userId='${response.user.id}']`);
+                            if (datauserId) {
+                                datauserId.textContent = response.token;
+                            }
+                            if (response.token) {
+                              // Сохраняем токен в localStorage
+                              localStorage.setItem('auth_token', response.token);
+                            } else {
+                              console.log('Login failed');
+                            }
+                            //Activate logout button
+                            $('#logout').removeClass('hidden');
+                        },
+                        error: function(xhr) {
+                            alert('Failed');
+                            console.error('Error logging in: ', xhr.responseText);
+                        }
+                    });
+                });
+            }
+            function removeToken() {
+                const token = localStorage.getItem('auth_token');
+                $.ajax({
+                    url: '/api/logout',
+                    type: 'POST',
+                    data: token,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token'),
+                    },
+                    success: function(response) {
+                        let tokenEl = document.querySelectorAll('.getToken');
+                            tokenEl.forEach(function(el) {
+                            el.textContent = ''; 
+                        });
+                        localStorage.removeItem('auth_token');
+                        $('#logout').addClass('hidden');
+                    },
+                    error: function(xhr) {
+                        console.log('error');
+                        $('#logout').removeClass('hidden');
+                    }
                 });
             }
           </script>
