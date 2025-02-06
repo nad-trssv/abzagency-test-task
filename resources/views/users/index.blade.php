@@ -68,7 +68,8 @@
         
                         <div class="mb-4">
                             <label for="position_id" class="block text-gray-700">Position</label>
-                            <input type="number" id="position_id" name="position_id" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                            <select id="position_id" name="position_id" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                            </select>
                             <div id="position_id-error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                         <div class="mb-4">
@@ -105,6 +106,7 @@
                 }
 
                 loadUsers(currentPage, false);
+
                 $('#load-more-btn').click(function() {
                     currentPage++;
                     loadUsers(currentPage, false);
@@ -113,6 +115,7 @@
 
                 // Open Modal "new user"
                 $('#new-user-modal').click(function() {
+                    loadPositions();
                     $('#modal').removeClass('hidden');
                 });
                 // Close Modal "new user"
@@ -163,14 +166,12 @@
                 });
             });
             function loadUsers(page, clear) {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                    }
-                });
                 $.ajax({
                     url: `/api/users?page=${page}`,
                     type: 'GET',
+                    header: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
                     success: function(response) {
                         const newUsers = response.users;
                         if(clear === true){
@@ -182,6 +183,23 @@
                         if (response.page >= response.total_pages) {
                             $('#load-more-btn').hide();
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching data: ', error);
+                    }
+                });
+            }
+            function loadPositions(){
+                $.ajax({
+                    url: '/api/positions',
+                    type: 'GET',
+                    header: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        response.positions.forEach(function(position) {
+                            $('#position_id').append(new Option(position.name, position.id));
+                        });
                     },
                     error: function(xhr, status, error) {
                         console.error('Error fetching data: ', error);
@@ -208,7 +226,7 @@
                             <td>${user.position}</td>
                             <td>
                                 <button class="login-btn text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                                    Get token
+                                    Get token & login
                                 </button>
                                 <p class="getToken" data-userId="${user.id}"></p>
                             </td>
@@ -217,15 +235,15 @@
                     $('#users-table tbody').append(row);
                 });
                 $('.login-btn').on('click', function() {
-                    console.log('pressed login btn');
                     const email = $(this).closest('tr').find('td:nth-child(2)').text().trim();
                     $.ajax({
                         url: '/api/token',
                         type: 'POST',
                         data: { email: email},
+                        header: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
                         success: function(response) {
-                            console.log('login response');
-                            console.log(response);
                             let tokenEl = document.querySelectorAll('.getToken');
                             tokenEl.forEach(function(el) {
                                 el.textContent = ''; 
@@ -256,6 +274,9 @@
                     url: '/api/logout',
                     type: 'POST',
                     data: token,
+                    header: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
                     processData: false,
                     contentType: false,
                     headers: {

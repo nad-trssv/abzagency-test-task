@@ -6,12 +6,11 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
 
-    public function token(Request $request)
+    public function token(Request $request): JsonResponse
     {
         $request->validate([
             'email' => 'required|email'
@@ -19,8 +18,9 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if(!empty($user)) {
-            $token = $user->createToken('auth_token')->plainTextToken;
+        if(!empty($user)) { 
+            $token = $user->createToken('auth_token', ['*'], now()->addMinutes(40))->plainTextToken;
+
             return response()->json([
                 "status" => true,
                 "user" => $user,
@@ -33,7 +33,8 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request): JsonResponse
+    {
         $request->user()->currentAccessToken()->delete();
         return response()->json([
             "status" => true,

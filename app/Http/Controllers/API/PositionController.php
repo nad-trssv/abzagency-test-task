@@ -7,7 +7,6 @@ use App\Http\Resources\PositionResource;
 use App\Services\PositionService;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PositionController extends Controller
 {

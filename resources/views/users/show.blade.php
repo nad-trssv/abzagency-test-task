@@ -50,6 +50,9 @@
                 $.ajax({
                     url: '/api/users/'+ id,
                     type: 'GET',
+                    headers: {
+                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token'),
+                    },
                     success: function(response) {
                         renderUser(response.user);
                     },

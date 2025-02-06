@@ -32,6 +32,9 @@
                 $.ajax({
                     url: '/api/positions',
                     type: 'GET',
+                    headers: {
+                      'Authorization': 'Bearer ' + localStorage.getItem('auth_token'),
+                    },
                     success: function(response) {
                         $('#positions-table tbody').empty();
                         response.positions.forEach(function(item) {

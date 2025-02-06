@@ -52,7 +52,7 @@
     <div class="endpoint">
         <p><strong>POST</strong> /token</p>
     </div>
-    <p><strong>Description</strong>: This endpoint generates an authentication token for the user. The user needs to provide credentials (email).</p>
+    <p><strong>Description</strong>: This endpoint generates an authentication token for the user. The user needs to provide credentials (email). The token is valid for 40 minutes after generation.</p>
     <h4>Request body (JSON):</h4>
     <pre><code>{
   "email": "user@example.com"
